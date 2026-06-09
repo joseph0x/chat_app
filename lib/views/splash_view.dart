@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import '../controllers/auth_controller.dart';
+import '../routes/app_routes.dart';
 import '../theme/app_theme.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
-
   @override
   State<SplashView> createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView> with SingleTickerProviderStateMixin {
-
+class _SplashViewState extends State<SplashView>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
@@ -32,91 +33,92 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
 
     _animationController.forward();
 
-    //_checkAuthAndNavigate();
-
+    _checkAuthAndNavigate();
   }
 
-  // _void _checkAuthAndNavigate()async{
-  //   await Future.delayed(Duration(seconds: 2));
-  //
-  //   final authController = Get.put(AuthController(), permanent: true);
-  //
-  //   await Future.delayed(Duration(milliseconds: 500));
-  //
-  //   if(authController.isAuthenticated){
-  //     Get.offAllNamed(AppRoutes.main);
-  //   }else{
-  //     Get.offAllNamed(AppRoutes.login);
-  //   }
-  // }
+  void _checkAuthAndNavigate() async {
+    await Future.delayed(Duration(seconds: 2));
 
+    final authController = Get.put(AuthController(), permanent: true);
+
+    await Future.delayed(Duration(milliseconds: 500));
+
+    if (authController.isAuthenticated) {
+      // Get.offAllNamed(AppRoutes.main);
+      Get.offAllNamed(AppRoutes.profile);
+    } else {
+      Get.offAllNamed(AppRoutes.login);
+    }
+  }
 
   @override
-  void dispose(){
+  void dispose() {
     _animationController.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       body: Center(
         child: AnimatedBuilder(
-            animation: _animationController,
-            builder: (context, child){
-              return FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: ScaleTransition(
-                      scale: _scaleAnimation,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black,
-                                blurRadius: 20,
-                                offset: Offset(0, 10),
-                              )
-                            ]
+          animation: _animationController,
+          builder: (context, child) {
+            return FadeTransition(
+              opacity: _fadeAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 20,
+                            offset: Offset(0, 10),
                           ),
-                          child: Icon(Icons.chat_bubble_rounded, size: 60, color: AppTheme.primaryColor,),
-                        ),
-                        SizedBox(
-                          height: 32,
-                        ),
-                        Text("ChatApp", style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        ),
-                        SizedBox(
-                          height: 32,
-                        ),
-                        Text("Connect With Friends and Family",
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.chat_bubble_rounded,
+                        size: 60,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                    SizedBox(height: 32),
+                    Text(
+                      "ChatApp",
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(
                             color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        SizedBox(
-                          height: 64,
-                        ),
-                        CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        )
-                      ],
-                    )
-                  ),
-              );
-            },
-      ),
+                    ),
+                    SizedBox(height: 32),
+                    Text(
+                      "Connect With Friends and Family",
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.white),
+                    ),
+                    SizedBox(height: 64),
+                    CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

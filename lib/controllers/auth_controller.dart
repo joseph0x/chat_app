@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-
 import '../models/user_model.dart';
 import '../routes/app_routes.dart';
 import '../services/auth_service.dart';
 
-
-class AuthController extends GetxController{
+class AuthController extends GetxController {
   final AuthService _authService = AuthService();
   final Rx<User?> _user = Rx<User?>(null);
   final Rx<UserModel?> _userModel = Rx<UserModel?>(null);
@@ -19,106 +17,121 @@ class AuthController extends GetxController{
   String get error => _error.value;
   bool get isAuthenticated => _user.value != null;
   bool get isInitialized => _isInitialized.value;
-  
+
   @override
-  void onInit(){
+  void onInit() {
     super.onInit();
     _user.bindStream(_authService.authStateChanges);
-    ever(_user, _handleAuthStateChange);
+    //ever(_user, _handleAuthStateChange);
   }
-  void _handleAuthStateChange(User? user){
-    if(user != null){
-      if(Get.currentRoute != AppRoutes.login){
-        Get.offAllNamed(AppRoutes.login);
-      }else{
-        if(Get.currentRoute != AppRoutes.main){
-          Get.offAllNamed(AppRoutes.main);
-        }
-      }
-      if(!_isInitialized.value){
-        _isInitialized.value = true;
-      }
-    }
-    void checkInitialAuthState(){
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if(currentUser != null){
-        _user.value = currentUser;
-        Get.offAllNamed(AppRoutes.main);
-      }else{
-        Get.offAllNamed(AppRoutes.login);
-      }
-      _isInitialized.value = true;
-    }
-  }
-  Future<void> signInWithEmailAndPassword(String email, String password)async{
-    try{
+
+  // void _handleAuthStateChange(User? user) {
+  //   if (user == null) {
+  //     if (Get.currentRoute != AppRoutes.login) {
+  //       Get.offAllNamed(AppRoutes.login);
+  //     }
+  //   } else {
+  //     if (Get.currentRoute != AppRoutes.profile) {
+  //       Get.offAllNamed(AppRoutes.profile);
+  //     }
+  //   }
+  //   if (!_isInitialized.value) {
+  //     _isInitialized.value = true;
+  //   }
+  // }
+
+  // void checkInitialAuthState() {
+  //   final currentUser = FirebaseAuth.instance.currentUser;
+  //   if (currentUser != null) {
+  //     _user.value = currentUser;
+  //     Get.offAllNamed(AppRoutes.main);
+  //   } else {
+  //     Get.offAllNamed(AppRoutes.login);
+  //   }
+  //   _isInitialized.value = true;
+  // }
+
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    try {
       _isLoading.value = true;
       _error.value = '';
 
-      UserModel? userModel = await _authService.signInWithEmailAndPassword(email, password);
-      if(_userModel != null){
+      UserModel? userModel = await _authService.signInWithEmailAndPassword(
+        email,
+        password,
+      );
+      if (userModel != null) {
         _userModel.value = userModel;
-        Get.offAllNamed(AppRoutes.main);
+        Get.offAllNamed(AppRoutes.profile);
       }
-    }catch(e){
+    } catch (e) {
       _error.value = e.toString();
       Get.snackbar('Error', 'Failed to log in');
       print(e);
-    }
-    finally{
+    } finally {
       _isLoading.value = false;
     }
   }
+
   //next
-  Future<void> registerWithEmailAndPassword(String email, String password, String displayName)async{
-    try{
+  Future<void> registerWithEmailAndPassword(
+    String email,
+    String password,
+    String displayName,
+  ) async {
+    try {
       _isLoading.value = true;
       _error.value = '';
 
-      UserModel? userModel = await _authService.registerWithEmailAndPassword(email, password, displayName);
-      if(_userModel != null){
+      UserModel? userModel = await _authService.registerWithEmailAndPassword(
+        email,
+        password,
+        displayName,
+      );
+      if (userModel != null) {
         _userModel.value = userModel;
-        Get.offAllNamed(AppRoutes.main);
+        Get.offAllNamed(AppRoutes.profile);
       }
-    }catch(e){
+    } catch (e) {
       _error.value = e.toString();
       Get.snackbar('Error', 'Failed to register user');
       print(e);
-    }
-    finally{
+    } finally {
       _isLoading.value = false;
     }
   }
+
   //next
-  Future<void> signOut()async{
-    try{
+  Future<void> signOut() async {
+    try {
       _isLoading.value = true;
       await _authService.signOut();
       _userModel.value = null;
       Get.offAllNamed(AppRoutes.login);
-    }catch(e){
+    } catch (e) {
       _error.value = e.toString();
       Get.snackbar('Error', 'Failed to sign out');
-    }finally{
-      _isLoading.value = false;
-    }
-  }
-  //next
-  Future<void> deleteAccount()async{
-    try{
-      _isLoading.value = true;
-      await _authService.deleteAccount();
-      _userModel.value = null;
-      Get.offAllNamed(AppRoutes.login);
-    }catch(e){
-      _error.value = e.toString();
-      Get.snackbar('Error', 'Failed to delete the account');
-    }finally{
+    } finally {
       _isLoading.value = false;
     }
   }
 
-  void clearError(){
+  //next
+  Future<void> deleteAccount() async {
+    try {
+      _isLoading.value = true;
+      await _authService.deleteAccount();
+      _userModel.value = null;
+      Get.offAllNamed(AppRoutes.login);
+    } catch (e) {
+      _error.value = e.toString();
+      Get.snackbar('Error', 'Failed to delete the account');
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  void clearError() {
     _error.value = '';
   }
 }

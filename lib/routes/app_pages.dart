@@ -1,35 +1,42 @@
+import 'package:chat_app/controllers/change_password_controller.dart';
+import 'package:chat_app/views/profile/change_password_view.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/routes/get_route.dart';
-
+import '../controllers/profile_controller.dart';
+import '../views/auth/forgot_password_view.dart';
+import '../views/auth/login_view.dart';
+import '../views/auth/register_view.dart';
+import '../views/profile/profile_view.dart';
 import '../views/splash_view.dart';
 import 'app_routes.dart';
 
-class AppPages{
+class AppPages {
   static const initial = AppRoutes.splash;
 
   static final routes = [
     GetPage(name: AppRoutes.splash, page: () => const SplashView()),
-    // GetPage(name: AppRoutes.register, page: () => const RegisterView(), binding: BindingsBuilder(() {
-    //   Get.put(FriendRequestsController());
-    // })),
-    // GetPage(name: AppRoutes.login, page: () => const LoginView(), binding: BindingsBuilder(() {
-    //   Get.put(FriendRequestsController());
-    // })),
+    GetPage(name: AppRoutes.register, page: () => const RegisterView()),
+    GetPage(name: AppRoutes.login, page: () => const LoginView()),
     // GetPage(name: AppRoutes.home, page: () => const HomeView(), binding: BindingsBuilder(() {
     //   Get.put(FriendRequestsController());
     // })),
     // GetPage(name: AppRoutes.main, page: () => const MainView(), binding: BindingsBuilder(() {
     //   Get.put(FriendRequestsController());
     // })),
-    // GetPage(name: AppRoutes.forgotPassword, page: () => const ForgotPasswordView(), binding: BindingsBuilder(() {
-    //   Get.put(FriendRequestsController());
-    // })),
-    // GetPage(name: AppRoutes.changePassword, page: () => const ChangePasswordView(), binding: BindingsBuilder(() {
-    //   Get.put(FriendRequestsController());
-    // })),
-    // GetPage(name: AppRoutes.profile, page: () => const ProfileView(), binding: BindingsBuilder(() {
-    //   Get.put(FriendRequestsController());
-    // })),
+    GetPage(
+      name: AppRoutes.forgotPassword,
+      page: () => const ForgotPasswordView(),
+    ),
+    GetPage(
+      name: AppRoutes.changePassword,
+      page: () => const ChangePasswordView(),
+    ),
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => const ProfileView(),
+      binding: BindingsBuilder(() {
+        Get.put(ProfileController());
+      }),
+    ),
     // GetPage(name: AppRoutes.usersList, page: () => const UsersListView(), binding: BindingsBuilder(() {
     //   Get.put(FriendRequestsController());
     // })),

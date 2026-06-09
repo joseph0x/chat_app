@@ -15,78 +15,94 @@ class AuthService {
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   Future<UserModel?> signInWithEmailAndPassword(
-      String email,
-      String password,
-      )async{
-    try{
-      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    String email,
+    String password,
+  ) async {
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       User? user = result.user;
-      if(user != null){
+      print(
+        'signInWithEmailAndPassword result user: ${user?.uid} / ${user?.email}',
+      );
+      print('currentUser after sign in: ${_auth.currentUser?.uid}');
+      if (user != null) {
         await _firestoreService.updateUserOnlineStatus(user.uid, true);
         return await _firestoreService.getUser(user.uid);
       }
       return null;
-    }catch(e){
+    } catch (e) {
       throw Exception('Failed to sign in:  ${e.toString()}');
     }
   }
 
   //register
   Future<UserModel?> registerWithEmailAndPassword(
-      String email,
-      String password,
-      String displayName,
-      )async{
-    try{
-      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    String email,
+    String password,
+    String displayName,
+  ) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       User? user = result.user;
-      if(user != null){
+      print(
+        'registerWithEmailAndPassword result user: ${user?.uid} / ${user?.email}',
+      );
+      print('currentUser after register: ${_auth.currentUser?.uid}');
+      if (user != null) {
         await user.updateDisplayName(displayName);
         final userModel = UserModel(
-            id: user.uid,
-            email: email,
-            displayName: displayName,
-            photoURL: '',
-            isOnline: true,
-            lastSeen: DateTime.now(),
-            createdAt: DateTime.now(),
+          id: user.uid,
+          email: email,
+          displayName: displayName,
+          photoURL: '',
+          isOnline: true,
+          lastSeen: DateTime.now(),
+          createdAt: DateTime.now(),
         );
         await _firestoreService.createUser(userModel);
         return userModel;
       }
       return null;
-    }catch(e){
+    } catch (e) {
       throw Exception('Failed to sign up:  ${e.toString()}');
     }
   }
+
   //continuation
-  Future<void> sendPasswordResetEmail(String email)async{
-    try{
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
       await _auth.sendPasswordResetEmail(email: email);
-    }catch(e){
+    } catch (e) {
       throw Exception('Failed to send password reset mail:  ${e.toString()}');
     }
   }
-  Future<void> signOut()async{
-    try{
-      if(currentUser != null){
-        await _firestoreService.updateUserOnlineStatus(currentUserId!,false);
+
+  Future<void> signOut() async {
+    try {
+      if (currentUser != null) {
+        await _firestoreService.updateUserOnlineStatus(currentUserId!, false);
       }
       await _auth.signOut();
-    }catch(e){
+    } catch (e) {
       throw Exception('Failed to sign out:  ${e.toString()}');
     }
   }
-  Future<void> deleteAccount()async{
-    try{
+
+  Future<void> deleteAccount() async {
+    try {
       User? user = _auth.currentUser;
-      if(user != null){
+      if (user != null) {
         await _firestoreService.deleteUser(user.uid);
         await user.delete();
       }
-    }catch(e){
+    } catch (e) {
       throw Exception('Failed to Delete Account:  ${e.toString()}');
     }
   }
-
 }
