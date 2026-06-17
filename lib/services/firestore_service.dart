@@ -424,7 +424,7 @@ class FirestoreService {
   }
 
   //chats collection
-  Future<String> createOrGetUser(String userId1, String userId2) async {
+  Future<String> createOrGetChat(String userId1, String userId2) async {
     try {
       List<String> participants = [userId1, userId2];
       participants.sort();
@@ -560,7 +560,7 @@ class FirestoreService {
           .doc(message.id)
           .set(message.toMap());
 
-      String chatId = await createOrGetUser(
+      String chatId = await createOrGetChat(
         message.senderId,
         message.receiverId,
       );
